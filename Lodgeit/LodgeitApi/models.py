@@ -2,22 +2,28 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class Company(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
+    
 class Staff(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     username = models.CharField(max_length=50, blank=False)
     owner = models.BooleanField(default=False)
     notification = models.BooleanField(default=True)
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # Add unique `related_name` values to avoid conflicts
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name="staff_user_groups",  # Avoids clash with `auth.User.groups`
+        related_name="staff_user_groups",
         blank=True,
         help_text="The groups this user belongs to."
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name="staff_user_permissions",  # Avoids clash with `auth.User.user_permissions`
+        related_name="staff_user_permissions",
         blank=True,
         help_text="Specific permissions for this user."
     )
@@ -26,4 +32,4 @@ class Staff(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return self.username
+        return self.email
