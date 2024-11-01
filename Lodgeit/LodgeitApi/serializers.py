@@ -4,14 +4,14 @@ from .models import Staff, Company
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
-        fields = ['name']
-        extra_kwargs = {'name': {'required':False, 'allow_null': True}}
+        fields = ['id','name']
 
 class StaffSerializer(serializers.ModelSerializer):
-    company = CompanySerializer()
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Staff
-        fields = ['id', 'email', 'username', 'owner', 'notification', 'password', 'company']
+        fields = ['id', 'email', 'username', 'owner', 'notification', 'password', 'company', 'company_id']
         extra_kwargs = {'password': {'write_only': True}, 'company': {'required': False, 'allow_null': True}}
         
     def create(self, validated_data):
